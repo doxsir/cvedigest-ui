@@ -2,6 +2,11 @@ name: build
 
 on: [push]
 
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -12,3 +17,11 @@ jobs:
           node-version: 20
       - run: npm install
       - run: npm run build
+      # vite надо сказать base, иначе ассеты будут с абсолютных путей и на Pages побьются
+      - run: npx vite build --base=/cvedigest-ui/
+      - name: deploy to gh-pages
+        if: github.ref == 'refs/heads/main'
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: dist
