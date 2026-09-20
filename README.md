@@ -4,8 +4,11 @@
 [cvedigest](https://github.com/doxsir/cvedigest) — тот же источник данных,
 но в браузере и с цветными бейджиками.
 
+**Живой дашборд:** https://doxsir.github.io/cvedigest-ui/
+
 React + Vite, ходит напрямую к api.github.com (CORS разрешён, анонимных
-60 req/h для демо хватает). Без бэкенда.
+60 req/h для демо хватает) + каталог CISA KEV через raw-зеркало. Без бэкенда.
+Деплой на GitHub Pages автоматом из CI при каждом пуше в main.
 
 ## Запуск
 
