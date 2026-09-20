@@ -4,6 +4,7 @@ const SEV_ORDER = { critical: 4, high: 3, medium: 2, low: 1 }
 
 export default function App() {
   const [items, setItems] = useState(null)
+  const [kev, setKev] = useState(null)
   const [error, setError] = useState(null)
   const [eco, setEco] = useState('')
   const [minSev, setMinSev] = useState('')
@@ -23,6 +24,14 @@ export default function App() {
       .catch((e) => setError(e.message))
   }, [eco, minSev])
 
+  // cisa kev: то что реально эксплуатируют. фид 1.7МБ, тянем один раз
+  useEffect(() => {
+    fetch('https://raw.githubusercontent.com/cisagov/kev-data/main/known_exploited_vulnerabilities.json')
+      .then((r) => r.json())
+      .then((d) => setKev(new Set(d.vulnerabilities.map((v) => v.cveID))))
+      .catch(() => setKev(null)) // нет kev — не беда, живём без меток
+  }, [])
+
   if (error) return <p className="status">error: {error}</p>
   if (!items) return <p className="status">loading advisories...</p>
 
@@ -35,6 +44,7 @@ export default function App() {
         (a.cve_id || '').toLowerCase().includes(q),
     )
   }
+  const kevCount = kev ? shown.filter((a) => kev.has(a.cve_id)).length : null
 
   return (
     <div className="wrap">
@@ -65,14 +75,23 @@ export default function App() {
 
       <p className="dim small">
         {shown.length} advisories from github advisory db
+        {kevCount != null && (
+          <>
+            {' · '}
+            <span className={kevCount ? 'kev-hot' : 'dim'}>
+              {kevCount} in cisa kev
+            </span>
+          </>
+        )}
       </p>
 
       {shown.map((a) => {
         const score = a.cvss ? a.cvss.score : null
+        const inKev = kev && kev.has(a.cve_id)
         return (
           <a
             key={a.ghsa_id}
-            className={'card sev-' + a.severity}
+            className={'card sev-' + a.severity + (inKev ? ' is-kev' : '')}
             href={a.html_url}
             target="_blank"
             rel="noreferrer"
@@ -81,6 +100,7 @@ export default function App() {
               <span className={'badge ' + a.severity}>{a.severity}</span>
               {score != null && <span className="score">{score.toFixed(1)}</span>}
               <span className="cve">{a.cve_id || a.ghsa_id}</span>
+              {inKev && <span className="kev-tag">KEV</span>}
               <span className="dim small">{a.published_at.slice(0, 10)}</span>
             </div>
             <p>{a.summary}</p>
