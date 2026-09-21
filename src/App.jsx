@@ -46,6 +46,15 @@ export default function App() {
   }
   const kevCount = kev ? shown.filter((a) => kev.has(a.cve_id)).length : null
 
+  // группировка по дню публикации, для простенького бара
+  const byDay = {}
+  for (const a of shown) {
+    const d = a.published_at.slice(0, 10)
+    byDay[d] = (byDay[d] || 0) + 1
+  }
+  const days = Object.keys(byDay).sort().slice(-10)
+  const maxDay = Math.max(1, ...days.map((d) => byDay[d]))
+
   return (
     <div className="wrap">
       <h1>
@@ -84,6 +93,15 @@ export default function App() {
           </>
         )}
       </p>
+
+      <div className="chart">
+        {days.map((d) => (
+          <div key={d} className="day">
+            <div className="bar-v" style={{ height: (byDay[d] / maxDay) * 60 + 'px' }} title={d + ': ' + byDay[d]} />
+            <span className="dim small">{d.slice(5)}</span>
+          </div>
+        ))}
+      </div>
 
       {shown.map((a) => {
         const score = a.cvss ? a.cvss.score : null
