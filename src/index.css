@@ -130,3 +130,23 @@ h1 .dim {
   color: #f85149;
   font-weight: 600;
 }
+
+.chart {
+  display: flex;
+  align-items: flex-end;
+  gap: 10px;
+  margin: 10px 0 20px;
+  min-height: 80px;
+}
+.day {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+.bar-v {
+  width: 26px;
+  background: #1f6feb;
+  border-radius: 3px 3px 0 0;
+  min-height: 3px;
+}
