@@ -131,6 +131,15 @@ h1 .dim {
   font-weight: 600;
 }
 
+.kev-toggle {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+  color: #f85149;
+  font-size: 14px;
+}
+
 .chart {
   display: flex;
   align-items: flex-end;
