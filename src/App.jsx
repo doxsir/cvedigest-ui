@@ -9,6 +9,7 @@ export default function App() {
   const [eco, setEco] = useState('')
   const [minSev, setMinSev] = useState('')
   const [query, setQuery] = useState('')
+  const [kevOnly, setKevOnly] = useState(false)
 
   useEffect(() => {
     // 60 req/h анонимно, для дашборда хватает
@@ -44,7 +45,10 @@ export default function App() {
         (a.cve_id || '').toLowerCase().includes(q),
     )
   }
-  const kevCount = kev ? shown.filter((a) => kev.has(a.cve_id)).length : null
+  if (kevOnly && kev) {
+    shown = shown.filter((a) => kev.has(a.cve_id))
+  }
+  const kevCount = kev ? items.filter((a) => kev.has(a.cve_id)).length : null
 
   // группировка по дню публикации, для простенького бара
   const byDay = {}
@@ -80,6 +84,15 @@ export default function App() {
           value={query}
           onChange={(e) => setQuery(e.target.value)}
         />
+        <label className="kev-toggle" title={kev ? '' : 'kev catalog is still loading'}>
+          <input
+            type="checkbox"
+            checked={kevOnly}
+            disabled={!kev}
+            onChange={(e) => setKevOnly(e.target.checked)}
+          />
+          KEV only
+        </label>
       </div>
 
       <p className="dim small">
